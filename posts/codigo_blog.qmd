@@ -1,0 +1,243 @@
+---
+title: "Código Completo"
+date: 2025-10-19
+format: html
+page-layout: full
+---
+
+```{r}
+library(urca); library(tidyverse); library(forecast); library(stats); library(lmtest); library(gujarati); library(zoo); library(tseries); library(readxl); library(dynlm); library(dLagM); library(AER); library(xts); library(ecm); library(openxlsx); library(here); library(janitor); library(tidyr); library(dplyr); library(grid); library(ggplot2)
+```
+
+## Base de Datos
+
+```{r}
+data <- read_excel("C:/Users/User/Documents/Econometría/Econometría 2/Reto 2/Blog Reto 2/data/correa_salazar_data_R2.xlsx", sheet = "datos")
+```
+
+### Aplicar NA's
+
+```{r}
+encuesta <- as.data.frame(data)
+encuesta <- encuesta |>
+  mutate(
+    across(
+      where(is.numeric),
+      ~ na_if(na_if(na_if(.x, -88), -98), -99)
+    )
+  )
+```
+
+### Estadísticas Descriptivas
+
+#### Variable Dependiente
+
+¿Cómo considera usted la situación económica de su hogar comparada con la de hace 12 meses?
+
+```{r}
+summary(encuesta$situacion_economica)
+tab1 <- table(factor(data$situacion_economica,
+                     levels = c(-98, 1, 2, 3, 4),
+                    labels = c("No Sabe", "Mucho Mejor", "Mejor", "Igual", "Peor")))
+bp1 <- barplot(tab1,
+              ylab = "Frecuencia",
+              col = "aquamarine",
+              ylim = c(0, max(tab1) * 1.15))
+text(x = bp1, y = tab1, labels = tab1, pos = 3)
+```
+
+#### Variable Independiente
+
+En los últimos 30 días, ¿Usted se preocupó alguna vez de que en su hogar se acabaran los alimentos debido a falta de dinero?
+
+```{r}
+summary(data$falta_alimento)
+tab2 <- table(factor(data$falta_alimento,
+                    levels = c(1, 2),
+                    labels = c("Sí", "No")))
+bp2 <- barplot(tab2,
+              ylab = "Frecuencia",
+              xlab = "¿Se preocupó?",
+              col = "aquamarine",
+              ylim = c(0, max(tab2) * 1.15))
+text(x = bp2, y = tab2, labels = tab2, pos = 3)
+```
+
+#### Controles
+
+```{r}
+vars <- c("edad", "sexo","educacion","situacion_laboral","estrato","personas_hogar")  
+
+summary(encuesta[ , vars])
+```
+
+```{r}
+ggplot(encuesta, aes(x = edad)) +
+  geom_histogram(binwidth = 5, fill = "aquamarine", color = "white") +
+  labs(x = "Edad (en intervalos de 5 años)", y = "Frecuencia",
+       title = "Distribución de edades de los encuestados") +
+  theme_minimal()
+
+```
+
+```{r}
+tab3 <- table(factor(data$sexo,
+                    levels = c(1, 2),
+                    labels = c("Hombre", "Mujer")))
+bp3 <- barplot(tab3,
+              ylab = "Frecuencia",
+              xlab = "Sexo",
+              col = "aquamarine",
+              ylim = c(0, max(tab3) * 1.15))
+text(x = bp3, y = tab3, labels = tab3, pos = 3)
+```
+
+```{r}
+tab4 <- table(factor(data$educacion))
+bp4 <- barplot(tab4,
+              ylab = "Frecuencia",
+              xlab = "Educación",
+              col = "aquamarine",
+              ylim = c(0, max(tab4) * 1.15))
+text(x = bp4, y = tab4, labels = tab4, pos = 3)
+```
+
+Para la gráfica de la educación se debe tener en cuenta lo siguiente:
+
+-   -98: No sabe
+
+-   0: Ninguno
+
+-   1: Preescolar
+
+-   2: Primaria
+
+-   3: Secundaria
+
+-   4: Bachillerato
+
+-   5: Media Técnica
+
+-   6: Tecnológico
+
+-   7: Universidad
+
+-   8: Especialización
+
+-   9: Maestría
+
+-   10: Doctorado
+
+-   11: Educación no Formal
+
+### Filtros para la Base
+
+```{r}
+encuesta <- encuesta %>%
+  mutate(
+    sexo = case_when(
+      sexo %in% c(1L) ~ 0L,  # hombre -> 0
+      sexo %in% c(2L) ~ 1L,  # mujer -> 1
+      TRUE ~ NA_integer_
+    )
+  )
+```
+
+```{r}
+encuesta <- encuesta %>%
+  filter(edad>=19 & edad<=60) %>%
+  mutate(edad2 = edad*edad)
+```
+
+```{r}
+encuesta <- encuesta %>%
+  mutate(
+    situacion_economica = case_when(
+      situacion_economica %in% c(1L, 2L) ~ 1L,  # mucho mejor / mejor -> 1
+      situacion_economica %in% c(3L, 4L) ~ 0L,  # igual / peor        -> 0
+      TRUE ~ NA_integer_
+    )
+  )
+```
+
+```{r}
+encuesta <- encuesta %>%
+  mutate(
+    falta_alimento = case_when(
+      falta_alimento == 2L ~ 0L,  # no -> 0
+      falta_alimento == 1L ~ 1L,  # sí -> 1
+      TRUE ~ NA_integer_             # cualquier otro valor -> NA
+    )
+  )
+```
+
+```{r}
+encuesta <- encuesta %>%
+  mutate(
+    educacion = case_when(
+      educacion %in% c(0L, 1L, 2L, 3L, 11L) ~ 0L,  #básica (ninguna-secundaria y educación no formal) -> 0
+      educacion %in% c(4L) ~ 1L,  #media (bachillerato) -> 1
+      educacion %in% c(5L, 6L, 7L, 8L, 9L, 10L) ~ 2L,  #superior (media técnica- doctorado) -> 2
+      TRUE ~ NA_integer_
+    )
+  )
+```
+
+```{r}
+encuesta <- encuesta %>%
+  mutate(
+    situacion_laboral = case_when(
+       situacion_laboral %in% c(1L, 2L, 3L, 4L) ~ 1L,  #empleado -> 1
+       situacion_laboral %in% c(5L,6L, 7L, 8L, 9L) ~ 0L,  #desempleado e inactivo -> 0
+      TRUE ~ NA_integer_
+    )
+  )
+```
+
+```{r}
+encuesta <- encuesta %>%
+  mutate(
+    estrato = case_when(
+       estrato %in% c(1L, 2L) ~ 0L,  #estrato bajo -> 0
+       estrato %in% c(3L, 4L) ~ 1L,  #estrato medio -> 1
+       estrato %in% c(5L, 6L) ~ 2L,  #estrato alto -> 2
+      TRUE ~ NA_integer_
+    )
+  )
+```
+
+```{r}
+encuesta <- encuesta %>%
+  mutate(
+    internet = case_when(
+       internet %in% c(2L) ~ 0L,  #no tiene -> 0
+       internet %in% c(1L) ~ 1L,  #si tiene -> 1
+      TRUE ~ NA_integer_
+    )
+  )
+```
+
+## Regresión Lineal Simple
+
+```{r}
+ols1 <- lm(situacion_economica ~ falta_alimento, data = encuesta, na.action = na.omit)
+summary(ols1)
+
+#situacion_economica -> ¿Cómo considera usted la situación económica de su hogar comparada con la de hace 12 meses?
+
+#falta_alimento -> En los últimos 30 días, ¿Usted se preocupó alguna vez de que en su hogar se acabaran los alimentos debido a falta de dinero?
+```
+
+## Regresión Lineal Múltiple
+
+```{r}
+ols2 <- lm(situacion_economica ~ edad+sexo+educacion+situacion_laboral+estrato+personas_hogar+falta_alimento, data = encuesta, na.action = na.omit)
+summary(ols2)
+```
+
+## Modelo IV y Tests de los Instrumentos
+
+```{r}
+validez <- ivreg(situacion_economica ~ edad+sexo+educacion+situacion_laboral+estrato+personas_hogar+falta_alimento | edad+sexo+educacion+situacion_laboral+estrato+personas_hogar+nevera+internet, data = encuesta, na.action = na.omit)
+summary(validez, diagnostics = TRUE)
+```

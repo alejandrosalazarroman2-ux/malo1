@@ -1,0 +1,65 @@
+---
+title: "Estimación por Variables Instrumentales del Bienestar Económico en San Javier"
+author: Juan Francisco Correa y Alejandro Enrique Salazar
+description: "Efecto de la inseguridad alimentaria sobre la percepción económica de los hogares"
+date: 2025-10-23
+categories: [econometría, análisis, hallazgos]
+format: html
+---
+
+## 📌 Problema de Investigación
+
+La inseguridad alimentaria constituye uno de los principales retos socioeconómicos en las ciudades latinoamericanas. En contextos urbanos como Medellín, donde las brechas socioeconómicas se expresan con fuerza a nivel territorial, la dificultad de los hogares para acceder de manera estable a una alimentación adecuada se traduce no solo en privaciones materiales, sino también en percepciones negativas sobre su bienestar y progreso económico. Analizar la relación entre la inseguridad alimentaria y la percepción económica de los hogares resulta fundamental para comprender cómo las condiciones materiales influyen en el bienestar subjetivo de la población y, por ende, en el diseño de políticas públicas orientadas a reducir la vulnerabilidad social.
+
+El presente estudio se centra en la comuna de San Javier, una de las zonas más densamente pobladas de Medellín y con importantes desafíos en materia de pobreza multidimensional, empleo informal y desigualdad. A partir de los datos de la Encuesta de Calidad de Vida de Medellín (ECV) 2024, se propone estimar el efecto que tiene la preocupación por la falta de alimentos en el hogar como indicador de inseguridad alimentaria sobre la percepción que los individuos tienen acerca de la situación económica actual de su hogar en comparación con la de hace doce meses. Esta relación, además de ser relevante desde una perspectiva social, plantea un reto econométrico: la posible endogeneidad entre ambas variables, dado que la percepción económica podría influir simultáneamente en la preocupación por la disponibilidad de alimentos, generando sesgos en una estimación por Mínimos Cuadrados Ordinarios (MCO).
+
+Para abordar este problema, se emplea un modelo de Variables Instrumentales (IV), que permite identificar un efecto causal bajo ciertos supuestos de validez de los instrumentos. En particular, se utilizan dos características del hogar la disponibilidad de conexión a internet y la presencia de nevera o enfriador como instrumentos de la variable endógena. Estas variables reflejan el nivel de dotación material y acceso a bienes duraderos del hogar, lo cual las hace relevantes para explicar la probabilidad de experimentar inseguridad alimentaria, pero razonablemente exógenas respecto a la percepción económica subjetiva.
+
+### 🧮 Variables Principales
+
+Las variables que se incluyeron entonces para la estimación son:
+
+-   **Variable Dependiente:** ¿Cómo considera usted la situación económica de su hogar comparada con la de hace 12 meses?
+
+-   **Variable Independiente:** En los últimos 30 días, ¿Usted se preocupó alguna vez de que en su hogar se acabaran los alimentos debido a falta de dinero?
+
+-   **Controles:** Edad, sexo, nivel educativo, situación laboral, estrato socioeconómico y número de personas en el hogar.
+
+-   **Instrumentos:** Disponibilidad de conexión a internet y la presencia de nevera o enfriador.
+
+## 📈 Principales Hallazgos
+
+Como ya se mencionó, para el trabajo se realizó una estimación por Variables Instrumentales, pero antes se hizo una estimación de la variable dependiente contra los controles y la variable independiente, esto con el objetivo de aislar el efecto de la variable endógena y examinar si su relación con la percepción económica era lógica una vez consideradas otras características individuales y del hogar. En esta regresión, el coeficiente asociado a la variable *falta_alimento* (variable independiente) fue negativo $(-0.23)$ y altamente significativo, confirmando la relación adversa entre la preocupación por la falta de alimentos y la percepción económica. Además, la edad mostró una relación negativa y significativa, mientras que la situación laboral presentó un efecto positivo, lo que sugiere que las personas empleadas tienden a valorar mejor su situación económica.
+
+Después de esto, se hizo la estimación por IV que arrojó resultados interesantes. En primer lugar, el coeficiente asociado a la variable falta_alimento conserva el signo negativo esperado $(-0.15)$, aunque deja de ser estadísticamente significativo (p = 0.196). Este resultado sugiere que, una vez corregido el posible problema de endogeneidad mediante los instrumentos seleccionados (disponibilidad de nevera o enfriador y conexión a internet), el efecto directo de la preocupación por la falta de alimentos sobre la percepción económica del hogar pierde fuerza estadística. En otras palabras, al aislar la parte exógena de la variable endógena, la relación entre inseguridad alimentaria y percepción económica negativa parece estar parcialmente mediada por otros factores socioeconómicos que no fueron capturados de forma explícita en el modelo.
+
+Por otro laod, también se desarrollaron diversos tests a los instrumentos escogidos los cuales arrojaron que estos eran relevantes, están correlacionados con la variable endógena y que no hay evidencia de correlación entre estos y el término de error.
+
+En conjunto, estos resultados respaldan la correcta especificación del modelo y la idoneidad de los instrumentos seleccionados. Si bien el efecto estimado de la inseguridad alimentaria sobre la percepción económica pierde significancia estadística al aplicar la corrección por endogeneidad, los resultados permiten concluir que la preocupación por la falta de alimentos sigue siendo un indicador relevante del bienestar subjetivo de los hogares.
+
+## 📄 Documento Completo
+
+Si quieres leer o revisar el informa completo donde se incluye una explicación más detallada de la problemática a investigar y resultados más completos, puedes descargarlo aquí:
+
+👉 [Estimación p](../Reto_2___Econometría.pdf){target="_blank"}[or Variables Instrumentales del Bienestar Económico en San Javier](../Reto_2__Econometria.pdf){target="_blank"}
+
+## 📊 Base de Datos Utilizada
+
+A continuación se muestra una vista previa de la base de datos empleada para estimar el modelo de variables instrumentales.
+
+```{r}
+library(readxl)
+library(DT)
+datos <- readxl::read_excel("../data/correa_salazar_data_R2.xlsx", sheet = "datos")
+DT::datatable(head(datos, 10), options = list(pageLength = 5))
+```
+
+**Puedes descargar la base completa aquí:**
+
+👉 [Descargar base de datos (Excel)](../data/correa_salazar_data_R2.xlsx){target="_blank"}
+
+## 💻 Código R Utilizado
+
+Si quieres ver el código completo que se empleó para la estimación por IV y donde también se incluyen cosas como estadísticas descriptivas o gráficas, lo puedes descargar aquí:
+
+👉 [Ver código R del modelo IV](codigo_blog.qmd){target="_blank"}

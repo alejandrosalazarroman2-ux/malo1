@@ -1,0 +1,8 @@
+"0","encuesta <- encuesta %>%"
+"0","  mutate("
+"0","    sexo = case_when("
+"0","      sexo %in% c(1L) ~ 0L,  # hombre -> 0"
+"0","      sexo %in% c(2L) ~ 1L,  # mujer -> 1"
+"0","      TRUE ~ NA_integer_"
+"0","    )"
+"0","  )"

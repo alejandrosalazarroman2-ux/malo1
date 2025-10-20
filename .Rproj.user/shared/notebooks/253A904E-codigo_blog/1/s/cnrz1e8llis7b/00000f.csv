@@ -1,0 +1,8 @@
+"0","encuesta <- encuesta %>%"
+"0","  mutate("
+"0","    falta_alimento = case_when("
+"0","      falta_alimento == 2L ~ 0L,  # no -> 0"
+"0","      falta_alimento == 1L ~ 1L,  # sí -> 1"
+"0","      TRUE ~ NA_integer_             # cualquier otro valor -> NA"
+"0","    )"
+"0","  )"

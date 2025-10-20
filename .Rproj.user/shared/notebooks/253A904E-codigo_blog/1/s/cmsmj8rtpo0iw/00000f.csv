@@ -1,0 +1,8 @@
+"0","encuesta <- as.data.frame(data)"
+"0","encuesta <- encuesta |>"
+"0","  mutate("
+"0","    across("
+"0","      where(is.numeric),"
+"0","      ~ na_if(na_if(na_if(.x, -88), -98), -99)"
+"0","    )"
+"0","  )"

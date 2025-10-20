@@ -1,0 +1,8 @@
+"0","tab3 <- table(factor(data$sexo,"
+"0","                    levels = c(1, 2),"
+"0","                    labels = c(""Hombre"", ""Mujer"")))"
+"0","bp3 <- barplot(tab3,"
+"0","              ylab = ""Frecuencia"","
+"0","              xlab = ""Sexo"","
+"0","              col = ""aquamarine"","
+"0","              ylim = c(0, max(tab3) * 1.15))"

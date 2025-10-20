@@ -1,0 +1,6 @@
+"0","tab4 <- table(factor(data$educacion))"
+"0","bp4 <- barplot(tab4,"
+"0","              ylab = ""Frecuencia"","
+"0","              xlab = ""Educación"","
+"0","              col = ""aquamarine"","
+"0","              ylim = c(0, max(tab4) * 1.15))"

@@ -1,0 +1,6 @@
+"0","ggplot(encuesta, aes(x = edad)) +"
+"0","  geom_histogram(binwidth = 5, fill = ""aquamarine"", color = ""white"") +"
+"0","  labs(x = ""Edad (en intervalos de 5 años)"", y = ""Frecuencia"","
+"0","       title = ""Distribución de edades de los encuestados"") +"
+"0","  theme_minimal()"
+"0",""

@@ -1,0 +1,8 @@
+"0","encuesta <- encuesta %>%"
+"0","  mutate("
+"0","    situacion_economica = case_when("
+"0","      situacion_economica %in% c(1L, 2L) ~ 1L,  # mucho mejor / mejor -> 1"
+"0","      situacion_economica %in% c(3L, 4L) ~ 0L,  # igual / peor        -> 0"
+"0","      TRUE ~ NA_integer_"
+"0","    )"
+"0","  )"
