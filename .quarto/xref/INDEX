@@ -19,5 +19,8 @@
   },
   "posts/codigo_blog.qmd": {
     "codigo_blog.html": "5ed09fa5"
+  },
+  "index.qmd": {
+    "index.html": "2bf6e701"
   }
 }
