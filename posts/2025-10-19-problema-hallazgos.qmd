@@ -41,7 +41,7 @@ En conjunto, estos resultados respaldan la correcta especificación del modelo y
 
 Si quieres leer o revisar el informe completo donde se incluye una explicación más detallada de la problemática a investigar y resultados más completos, puedes descargarlo aquí:
 
-👉 [Estimación p](../Reto_2___Econometría.pdf){target="_blank"}[or Variables Instrumentales del Bienestar Económico en San Javier](files/Reto_2__Econometria.pdf){target="_blank"}
+👉 [Estimación p](../Reto_2___Econometría.pdf){target="_blank"}[or Variables Instrumentales del Bienestar Económico en San Javier](files/Reto_2Econometria.pdf){target="_blank"}
 
 ## 📊 Base de Datos Utilizada
 
